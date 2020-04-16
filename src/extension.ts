@@ -1,27 +1,24 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from 'vscode'
+import foo from 'file-structurer'
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  let disposable = vscode.commands.registerCommand(
+    'dronz.helloWorld',
+    async (args) => {
+      const { path } = args
+      const output = foo({ path })
+      vscode.window.showInformationMessage(JSON.stringify(output))
+      const { mainFile } = output.paths
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "dronz" is now active!');
+      const doc = await vscode.workspace.openTextDocument(mainFile)
+      const editor = vscode.window.showTextDocument(doc)
+      vscode.commands.executeCommand(
+        'workbench.files.action.showActiveFileInExplorer'
+      )
+    }
+  )
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('dronz.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from dronz!');
-	});
-
-	context.subscriptions.push(disposable);
+  context.subscriptions.push(disposable)
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
